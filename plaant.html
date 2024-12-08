@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>Plant Identifier</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <h1>Plant Identifier</h1>
+    <input type="file" id="imageInput" accept="image/*" />
+    <p id="output"></p>
+    <p id="benefits"></p>
+    <script>
+        async function loadModel() {
+            const model = await tf.loadLayersModel('https://raw.githubusercontent.com/yourusername/yourrepo/main/model/model.json');
+            document.getElementById('imageInput').onchange = async function (event) {
+                const file = event.target.files[0];
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = async function () {
+                    const tensor = tf.browser.fromPixels(img)
+                        .resizeNearestNeighbor([224, 224])
+                        .toFloat()
+                        .expandDims();
+                    const prediction = model.predict(tensor);
+                    const result = prediction.argMax(-1).dataSync()[0];
+                    let plant = "";
+                    let benefits = "";
+                    if (result === 0) {
+                        plant = "Aloe Vera";
+                        benefits = "Soothes skin irritations, improves digestion, and boosts immunity.";
+                    } else if (result === 1) {
+                        plant = "Basil";
+                        benefits = "Reduces stress, supports respiratory health, and acts as an anti-inflammatory.";
+                    }
+                  else if (result === 2) {
+                        plant = "Neem";
+                        benefits = "Purifies the blood, treats acne, and improves oral health.";
+                    } 
+                
+                   else if (result === 3) {
+                        plant = "Ashwagandha";
+                        benefits = "Reduces stress, boosts brain function, and enhances energy.";
+                    }
+                   else if (result === 4) {
+                        plant = "Tulsi";
+                        benefits = "Relieves cold, strengthens immunity, and reduces stress.";
+                    }
+                   else if (result === 5) {
+                        plant = "Mint";
+                        benefits = "Improves digestion, relieves headaches, and soothes skin.";
+                    }
+                   else if (result === 6) {
+                       plant = "Rosemary";
+                        benefits = "Rosemary improves digestion, reduces stress, and promotes hair growth.";
+                    }
+                   else if (result === 7) {
+                        plant = "Giloy";
+                        benefits = "Giloy boosts immunity, fights infections, and detoxifies the body.";
+                    }
+                   else if (result === 8) {
+                         plant = "Moringa";
+                        benefits = "Moringa supports healthy blood sugar, promotes digestion, and is rich in antioxidants.";
+                    }
+                   else if (result === 9) {
+                         plant = "Amla";
+                        benefits = "Amla improves immunity, promotes hair growth, and is a powerful antioxidant.";
+                    }
+                   else if (result === 10) {
+                        plant = "Lemongrass";
+                        benefits = "Lemongrass helps in digestion, reduces stress, and has anti-inflammatory properties.";
+                    }
+                    else {
+                        plant = "Unknown Plant";
+                        benefits = "No medicinal benefits found.";
+                    }
+                  
+                    document.getElementById('output').innerText = `Plant: ${plant}`;
+                    document.getElementById('benefits').innerText = `Medicinal Benefits: ${benefits}`;
+                };
+            };
+        }
+        loadModel();
+    </script>
+</body>
+</html>
